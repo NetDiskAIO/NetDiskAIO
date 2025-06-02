@@ -80,7 +80,42 @@ docker run -d \
   netdiskaio/netdiskaio-noredis:latest
 ```
 
-*内置Redis版安装命令*
+*docker-compose方式安装*
+```
+version: '3.8'
+
+services:
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"  # 替换为实际访问端口（如 6379）
+    volumes:
+      - "/volume1/docker/NetDiskAIO/data:/data"  # 替换为本地数据路径
+      - "/volume1/docker/NetDiskAIO/redis.conf:/etc/redis/redis.conf"  # 替换为配置文件路径（redis配置文件在上方有示例配置）
+    privileged: true
+    command: redis-server /etc/redis/redis.conf
+    restart: unless-stopped
+
+  netdiskaio:
+    image: netdiskaio/netdiskaio-noredis:latest
+    container_name: netdiskaio-noredis
+    depends_on:
+      - redis
+    ports:
+      - "9001:5001"  # 替换为管理界面访问端口（如 5001）
+      - "9002:5002"  # 替换为Emby反向代理访问端口（如 5002,可配置多个对应多个Emby服务器,如不使用302可不配置）
+    volumes:
+      - "/volume1/docker/NetDiskAIO/logs:/app/logs"  # 替换为日志保存路径
+      - "/volume1/docker/NetDiskAIO/resources:/app/resources"  # 替换为配置文件路径
+    environment:
+      - LICENSE_KEY=<key>        # 填入许可证
+      - REDIS_IP=redis  # 使用服务名连接
+      - REDIS_PORT=6379
+    restart: always
+```
+
+*内置Redis版安装命令(不推荐使用)*
 
 ```
 docker run -d \
@@ -109,6 +144,58 @@ docker run -d \
 *若增加本地文件夹,请增加`-v`命令,例如增加了`/video`目录,想要映射到容器的`/video`中,则增加`-v /video:/video`。*
 
 *若配置了Emby服务器的302重定向功能,请增加`-p`命令,例如增加了`5002`作为Emby反向代理的入口,则增加`-p 5002:5002`。*
+
+## 使用引导
+
+*操作逻辑*
+
+    1. 已尽可能隐藏按钮图标以保证界面的简洁,所以操作多在右键菜单中,右键菜单包括但不限于 打开、移动、复制、重命名
+    2. 移动端操作单击为打开,长按为显示右键菜单 
+    3. 常态显示的按钮会根据当前显示的目录进行 切换/隐藏,避免误操作或显示混乱,如根目录下不显示 云下载、回收站 等功能
+    4. 支持多选,可shift多选,多选后右键菜单仅对选中项生效
+    5. 目录除根目录外均在最上方有 ... 文件夹显示,双击后会返回上一层,也可通过上方导航栏进行跳转
+
+*首页图标*
+
+![首页图标](https://github.com/NetDiskAIO/NetDiskAIO/blob/main/images/home_page.png "首页图标")
+
+*访问URL配置*
+
+![访问URL配置](https://github.com/NetDiskAIO/NetDiskAIO/blob/main/images/url_config_show.png "访问URL配置")
+
+*Emby配置*
+
+![Emby配置](https://github.com/NetDiskAIO/NetDiskAIO/blob/main/images/Emby_config.png "Emby配置")
+
+*备份配置*
+
+![备份配置](https://github.com/NetDiskAIO/NetDiskAIO/blob/main/images/backup_config_show.png "备份配置")
+
+*STRM生成*
+
+![STRM生成](https://github.com/NetDiskAIO/NetDiskAIO/blob/main/images/strm_config.png "STRM生成")
+
+*通知配置*
+
+![通知配置](https://github.com/NetDiskAIO/NetDiskAIO/blob/main/images/notification.png "通知配置")
+
+*日志级别配置*
+
+![日志级别配置](https://github.com/NetDiskAIO/NetDiskAIO/blob/main/images/logs.png "日志级别配置")
+
+*挂载目录*
+
+![挂载目录](https://github.com/NetDiskAIO/NetDiskAIO/blob/main/images/file_config1.png "挂载目录")
+
+![挂载目录](https://github.com/NetDiskAIO/NetDiskAIO/blob/main/images/file_config2.png "挂载目录")
+
+*115目录*
+
+![115目录](https://github.com/NetDiskAIO/NetDiskAIO/blob/main/images/115.png "115目录")
+
+*右键菜单*
+
+![右键菜单](https://github.com/NetDiskAIO/NetDiskAIO/blob/main/images/right_button.png "右键菜单")
 
 
 ## 效果展示
