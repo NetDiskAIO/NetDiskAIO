@@ -118,19 +118,6 @@ services:
     restart: always
 ```
 
-*内置Redis版安装命令(不推荐使用)*
-
-```
-docker run -d \
-  -v 本地数据保存路径:/data   # 冒号左边请修改为你想在本地保存数据的路径 \
-  -v 本地日志保存路径:/app/logs  # 冒号左边请修改为你想在本地保存日志数据的路径 \
-  -v 本地配置文件保存路径:/app/resources   # 冒号左边请修改为你想在本地保存配置文件的路径 \
-  -p 5001:5001 # 冒号左边请修改为你想用于访问管理界面的端口 \
-  -e LICENSE_KEY="许可证" # 冒号右边请修改为你获取到的许可证 \
-  --name netdiskaio \
-  --restart=always \
-  netdiskaio/netdiskaio:latest
-```
 
 *请将`-v`命令中的路径替换为实际路径。*
 
